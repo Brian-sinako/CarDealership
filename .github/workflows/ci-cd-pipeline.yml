@@ -1,0 +1,69 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x' # Change according to your .NET version
+
+      - name: Restore dependencies
+        run: dotnet restore CarDealership.sln
+
+      - name: Build project
+        run: dotnet build CarDealership.sln --configuration Release --no-restore
+
+      - name: Publish artifacts
+        run: dotnet publish CarDealership.sln --configuration Release --output ./output
+
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x' # Change according to your .NET version
+
+      - name: Run unit tests
+        run: dotnet test CarDealership.Tests/CarDealership.Tests.csproj --configuration Release --collect:"XPlat Code Coverage"
+
+      - name: Code analysis
+        run: dotnet sonarscanner begin /k:"your-project-key" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+      
+      - name: Analyze code
+        run: dotnet build CarDealership.sln
+      
+      - name: Finalize code analysis
+        run: dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+
+  deploy:
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Deploy to Staging
+        run: |
+          # Commands to deploy your application
+          echo "Deploying to Staging Environment..."
+          # You can replace the following command with your actual deployment command
+          # e.g., using Azure CLI or other deployment methods
+          az webapp deploy --resource-group your-resource-group --name your-webapp-name --src-path ./output
