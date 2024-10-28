@@ -68,7 +68,10 @@ jobs:
         with:
           name: production-artifact
       
-      - name: Deploy to Staging
+      - name: Deploy to Staging Environment 
+      env:
+        DEPLOYMENT_SERVER: ${{ secrets.DEPLOYMENT_SERVER}}
+        DEPLOYMENT_KEY: ${{ secrets.DEPLOYMENT_KEY}}
         run: |
           echo "Deploying to Staging..."
           # Add your deployment commands here
