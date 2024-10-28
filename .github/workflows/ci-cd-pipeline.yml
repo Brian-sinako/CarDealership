@@ -1,3 +1,13 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+   braches:
+     -main
+     pull_request:
+  braches:
+    -main
+    
 jobs:
   build:
     runs-on: ubuntu-latest
