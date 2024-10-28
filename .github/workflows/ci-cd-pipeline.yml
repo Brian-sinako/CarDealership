@@ -2,12 +2,12 @@ name: CI/CD Pipeline
 
 on:
   push:
-   braches:
-     -main
-     pull_request:
-  braches:
-    -main
-    
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -69,9 +69,14 @@ jobs:
           name: production-artifact
       
       - name: Deploy to Staging Environment 
-      env:
-        DEPLOYMENT_SERVER: ${{ secrets.DEPLOYMENT_SERVER}}
-        DEPLOYMENT_KEY: ${{ secrets.DEPLOYMENT_KEY}}
+        env:
+          DEPLOYMENT_SERVER: ${{ secrets.DEPLOYMENT_SERVER }}
+          DEPLOYMENT_KEY: ${{ secrets.DEPLOYMENT_KEY }}
         run: |
           echo "Deploying to Staging..."
-          # Add your deployment commands here
+          
+          # Use SSH to deploy the artifact to the server
+          scp -i $DEPLOYMENT_KEY -r build/* user@$DEPLOYMENT_SERVER:/path/to/deployment/directory
+          
+          # Optionally restart your application (if applicable)
+          ssh -i $DEPLOYMENT_KEY user@$DEPLOYMENT_SERVER 'pm2 restart my-app'  # Example using PM2
