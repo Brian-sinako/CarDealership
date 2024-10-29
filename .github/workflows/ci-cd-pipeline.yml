@@ -19,23 +19,22 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '7.0.x'  # Specify your .NET version
+          dotnet-version: '7.0.x'
 
-      - name: List directory contents
-        run: |
-          echo "Listing the root directory:"
-          ls -la
-          echo "Listing CarDealership directory:"
-          ls -la CarDealership  # Check contents of the CarDealership folder
+      - name: List root directory contents
+        run: ls -la
+
+      - name: List CarDealership directory contents
+        run: ls -la CarDealership  # Check contents of the CarDealership folder
 
       - name: Restore dependencies
-        run: dotnet restore CarDealership/CarDealership.csproj  # Ensure this path is correct
+        run: dotnet restore CarDealership.sln  # Use the solution file
 
       - name: Build the project
-        run: dotnet build CarDealership/CarDealership.csproj --configuration Release --no-restore  # Ensure this path is correct
+        run: dotnet build CarDealership.sln --configuration Release --no-restore  # Use the solution file
 
       - name: Publish the project
-        run: dotnet publish CarDealership/CarDealership.csproj --configuration Release --output ./artifacts  # Ensure this path is correct
+        run: dotnet publish CarDealership.sln --configuration Release --output ./artifacts  # Use the solution file
 
       - name: Archive production artifact
         run: tar -czf artifacts.tar.gz -C ./artifacts .  # Create a tarball of the published output
@@ -60,10 +59,10 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore CarDealership/CarDealership.csproj  # Ensure this path is correct
+        run: dotnet restore CarDealership.sln  # Use the solution file
 
       - name: Run unit tests
-        run: dotnet test CarDealership/CarDealership.csproj --configuration Release  # Ensure this path is correct
+        run: dotnet test CarDealership.sln --configuration Release  # Use the solution file
 
   deploy:
     runs-on: ubuntu-latest
