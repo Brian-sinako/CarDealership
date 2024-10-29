@@ -13,19 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: '7.0.x'  # Specify your .NET version
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore CarDealership/CarDealership.csproj  # Update this path
+      - name: List directory contents
+        run: |
+          echo "Listing current directory:"
+          ls -la
+          echo "Listing CarDealership directory:"
+          ls -la CarDealership  # Adjust if your project is in a different folder
 
-    - name: Build the project
-      run: dotnet build CarDealership/CarDealership.csproj --configuration Release --no-restore  # Update this path
+      - name: Restore dependencies
+        run: dotnet restore CarDealership/CarDealership.csproj  # Update if the path is incorrect
 
-    - name: Publish the project
-      run: dotnet publish CarDealership/CarDealership.csproj --configuration Release --output ./artifacts  # Update this path
+      - name: Build the project
+        run: dotnet build CarDealership/CarDealership.csproj --configuration Release --no-restore  # Update if the path is incorrect
