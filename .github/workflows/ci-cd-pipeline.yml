@@ -22,10 +22,10 @@ jobs:
           dotnet-version: '7.0.x'
 
       - name: List root directory contents
-        run: ls -la
+        run: ls -la  # List contents of the root directory
 
       - name: List CarDealership directory contents
-        run: ls -la CarDealership  # Check contents of the CarDealership folder
+        run: ls -la CarDealership  # List contents of the CarDealership directory
 
       - name: Restore dependencies
         run: dotnet restore CarDealership.sln  # Use the solution file
