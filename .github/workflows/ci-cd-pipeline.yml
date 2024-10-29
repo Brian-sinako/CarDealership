@@ -19,17 +19,67 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '7.0.x'  # Specify your .NET version
 
       - name: List directory contents
         run: |
-          echo "Listing current directory:"
+          echo "Listing the root directory:"
           ls -la
           echo "Listing CarDealership directory:"
-          ls -la CarDealership  # Adjust if your project is in a different folder
+          ls -la CarDealership  # Check contents of the CarDealership folder
 
       - name: Restore dependencies
-        run: dotnet restore CarDealership/CarDealership.csproj  # Update if the path is incorrect
+        run: dotnet restore CarDealership/CarDealership.csproj  # Ensure this path is correct
 
       - name: Build the project
-        run: dotnet build CarDealership/CarDealership.csproj --configuration Release --no-restore  # Update if the path is incorrect
+        run: dotnet build CarDealership/CarDealership.csproj --configuration Release --no-restore  # Ensure this path is correct
+
+      - name: Publish the project
+        run: dotnet publish CarDealership/CarDealership.csproj --configuration Release --output ./artifacts  # Ensure this path is correct
+
+      - name: Archive production artifact
+        run: tar -czf artifacts.tar.gz -C ./artifacts .  # Create a tarball of the published output
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: artifacts.tar.gz
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore CarDealership/CarDealership.csproj  # Ensure this path is correct
+
+      - name: Run unit tests
+        run: dotnet test CarDealership/CarDealership.csproj --configuration Release  # Ensure this path is correct
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'  # Deploy only from the main branch
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+
+      - name: Deploy to Staging
+        run: |
+          echo "Deploying to staging environment"
+          # Insert your deployment commands here
+
+      - name: Notify Deployment
+        run: echo "Deployment to staging successful!"
