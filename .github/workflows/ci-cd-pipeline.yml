@@ -41,7 +41,7 @@ jobs:
         run: tar -czf artifacts.tar.gz -C ./artifacts .  # Create a tarball of the published output
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: build-artifact
           path: artifacts.tar.gz
@@ -72,7 +72,7 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: build-artifact
 
